@@ -19,3 +19,29 @@ get '/stats' do
   @users = @db.execute("select count(*) from owners")[0][0]
   erb :stats
 end
+
+
+get '/:name' do
+  @allshows = @db.prepare("select distinct show from tv where owner = (SELECT id FROM owners WHERE name = ?)").execute(params[:name])
+  
+  # Build a multidimensional array like [[Seinfeld, SQL result set for all Seinfeld discs], [Hannibal, SQL result set for all Hannibal discs]]
+  @watched_shows = []
+  @allshows.each {|sub| @watched_shows << [sub[0], @db.prepare("SELECT episodes FROM tv WHERE show = ? AND owner = (SELECT id FROM owners WHERE name = ?)").execute(sub[0], params[:name])]}
+
+  # Build a string of watched shows to use as a header on the resulting page.
+  @watch_string_array = []
+  @db.prepare("select title from subscriptions where name = ?").execute(params[:name]).each do |sub| 
+    title = URI::encode(sub[0])
+    @watch_string_array << %Q*<a href="/shows/#{title}">#{sub[0]}</a>*
+  end
+  if @watch_string_array.length == 0 then
+    @watch_string_array = "nothing"
+  else
+    @watch_string_array = @watch_string_array.join(", ").gsub(/, (?!.*, )/, " and ")
+  end
+
+  # Get the list of all movies burnt for this person.
+  @movies = @db.prepare("select title from movies where owner = (SELECT id FROM owners WHERE name = ?)").execute(params[:name])
+
+  erb :subs
+end

@@ -1,0 +1,29 @@
+<div id="subs">
+<h2><%= params[:name] %> watches <%= @watch_string_array %>.</h2>
+</ul>
+</div>
+
+<div id="discs">
+<h1>TV Discs</h1>
+<% @watched_shows.each do |show| %>
+	<h2><%= show[0]%></h2>
+	<ol>
+	<% show[1].each do |i| %>
+		<li><%= i[0] %></li>
+	<% end %>
+	</ol>
+<% end %>
+</div>
+
+<div id="movies">
+	<h1>Movies</h1>
+	
+	<ol>
+		<% @movies.each do |item| %>
+			<li><%= item[0] %></li>
+		<% end %>
+	</ol>
+
+</div>
+
+<a href="../">back</a>
