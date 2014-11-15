@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>DVD Land</title>
+	<style>
+		body {
+			font-family: 'Cambria', 'Helvetica', sans-serif;
+			font-size:11pt;
+			width:50em;
+			margin:0 auto;
+		}
+		ul li {
+			list-style-type: none;
+		}
+		a, a:visited {
+			color:#FD0078;
+			font-weight:800;
+			text-decoration:none;
+		}
+		h1 {
+			font-size:24pt;
+		}
+		h2 {
+			font-size:14pt;
+		}
+
+		#discs h2 {
+			padding-left:1em;
+		}
+		#discs li {
+			margin-left:1em;
+		}
+		#userlist {
+			line-height:1em;
+			text-align:center;
+		}
+
+		table {
+			margin:2em auto;
+			border-collapse:collapse;
+		}
+		td {
+			border:1px solid navy;
+			padding:0.2em 1.5em;
+		}
+		th {
+			font-size:14pt;
+		}
+	</style>
+</head>
+<body>
+	<%= yield %>
+</body>
+</html>
