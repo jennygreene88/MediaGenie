@@ -1,0 +1,18 @@
+<table>
+	<thead>
+		<th>Owner</th>
+		<th>Title</th>
+		<th>Contents</th>
+		<th>Issued?</th>
+	</thead>
+
+	<% movie_id = 0 %>
+	<% @unissued_movies.each do |movie| %>
+		<%= %Q*<tr id="#{movie_id+=1}"> * %>
+			<td><%= movie[0] %></td>
+			<td><em><%= movie[1] %></em></td>
+			<td></td>
+			<td><input type="checkbox" /></td>
+		</tr>
+	<% end %>
+</table>

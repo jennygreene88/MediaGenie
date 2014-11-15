@@ -9,6 +9,12 @@ get '/' do
 end
 
 
+get '/queue' do
+  @unissued_movies = @db.execute("SELECT owners.name, movies.title FROM movies JOIN owners ON owners.id = movies.owner WHERE issued = 0")
+  erb :queue
+end
+
+
 get '/stats' do
   @issued = @db.execute("SELECT (SELECT COUNT(*) FROM MOVIES) as count1, (SELECT COUNT(*) FROM tv) as count2")[0].reduce(:+)
   @heaviest_movies = @db.execute("SELECT name from owners where id = (SELECT owner from movies group by owner order by owner asc limit 1)")[0][0]
