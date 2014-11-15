@@ -16,14 +16,14 @@ end
 
 
 get '/stats' do
-  @issued = @db.execute("SELECT (SELECT COUNT(*) FROM MOVIES) as count1, (SELECT COUNT(*) FROM tv) as count2")[0].reduce(:+)
-  @heaviest_movies = @db.execute("SELECT name from owners where id = (SELECT owner from movies group by owner order by owner asc limit 1)")[0][0]
-  @heaviest_tv = @db.execute("SELECT name from owners where id = (SELECT owner from tv group by owner order by owner asc limit 1)")[0][0]
-  @subscriptions = @db.execute("SELECT count(*) FROM subscriptions")[0][0]
-  @most_discs = @db.execute("select show from (select show, count(*) from tv group by show limit 1)")[0][0]
-  @most_popular = @db.execute("select title from (select title, count(*) as count1 from subscriptions group by title order by count1 desc limit 1)")[0][0]
-  @users = @db.execute("select count(*) from owners")[0][0]
-  @discs_per_day = sprintf "%.05f", @issued/((Time.now.to_i-Time.new("2014-01-01").to_i)/60/60/24).to_f
+  @issued           = @db.execute("SELECT (SELECT COUNT(*) FROM MOVIES) as count1, (SELECT COUNT(*) FROM tv) as count2")[0].reduce(:+)
+  @heaviest_movies  = @db.execute("SELECT name from owners where id = (SELECT owner from movies group by owner order by owner asc limit 1)")[0][0]
+  @heaviest_tv      = @db.execute("SELECT name from owners where id = (SELECT owner from tv group by owner order by owner asc limit 1)")[0][0]
+  @subscriptions    = @db.execute("SELECT count(*) FROM subscriptions")[0][0]
+  @most_discs       = @db.execute("select show from (select show, count(*) from tv group by show limit 1)")[0][0]
+  @most_popular     = @db.execute("select title from (select title, count(*) as count1 from subscriptions group by title order by count1 desc limit 1)")[0][0]
+  @users            = @db.execute("select count(*) from owners")[0][0]
+  @discs_per_day    = sprintf "%.05f", @issued/((Time.now.to_i-Time.new("2014-01-01").to_i)/60/60/24).to_f
 
   erb :stats
 end
@@ -38,10 +38,7 @@ get '/:name' do
 
   # Build a string of watched shows to use as a header on the resulting page.
   @watch_string_array = []
-  @db.prepare("select title from subscriptions where name = ?").execute(params[:name]).each do |sub| 
-    title = URI::encode(sub[0])
-    @watch_string_array << %Q*<a href="/shows/#{title}">#{sub[0]}</a>*
-  end
+  @db.prepare("select title from subscriptions where name = ?").execute(params[:name]).each { |sub| @watch_string_array << %Q*<a href="/shows/#{URI::encode(sub[0])}">#{sub[0]}</a>* }
   (@watch_string_array.length == 0) ?
       @watch_string_array = "nothing" :
       @watch_string_array = @watch_string_array.join(", ").gsub(/, (?!.*, )/, " and ")
@@ -52,12 +49,12 @@ get '/:name' do
   erb :subs
 end
 
+
 get '/shows/:show' do
-  raw_viewers = @db.prepare("SELECT name FROM subscriptions WHERE title = ? ORDER BY name ASC").execute(params[:show])
   @viewers = []
-  raw_viewers.each {|viewer| @viewers << viewer[0]}
+  @db.prepare("SELECT name FROM subscriptions WHERE title = ? ORDER BY name ASC").execute(params[:show]).each {|viewer| @viewers << viewer[0]}
   @viewers = @viewers.map { |name| "<a href='../../#{name}'>#{name}</a>" }
-  @viewers = @viewers.join(", ").gsub(/, (?!.*, )/, " and ")
+  @viewers = @viewers.join(", ").gsub(/, (?!.*, )/, " and ") # the gsub is to replace the final comma in the list with ", and "
 
   erb :viewers
 end
