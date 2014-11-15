@@ -51,3 +51,15 @@ get '/:name' do
 
   erb :subs
 end
+
+get '/shows/:show' do
+  raw_viewers = @db.prepare("SELECT name FROM subscriptions WHERE title = ? ORDER BY name ASC").execute(params[:show])
+  @viewers = []
+  raw_viewers.each {|viewer| @viewers << viewer[0]}
+  @viewers = @viewers.map do |name|
+    "<a href='../../#{name}'>#{name}</a>"
+  end
+  @viewers = @viewers.join(", ").gsub(/, (?!.*, )/, " and ")
+
+  erb :viewers
+end
