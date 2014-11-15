@@ -23,6 +23,8 @@ get '/stats' do
   @most_discs = @db.execute("select show from (select show, count(*) from tv group by show limit 1)")[0][0]
   @most_popular = @db.execute("select title from (select title, count(*) as count1 from subscriptions group by title order by count1 desc limit 1)")[0][0]
   @users = @db.execute("select count(*) from owners")[0][0]
+  @discs_per_day = sprintf "%.05f", @issued/((Time.now.to_i-Time.new("2014-01-01").to_i)/60/60/24).to_f
+
   erb :stats
 end
 
@@ -40,11 +42,9 @@ get '/:name' do
     title = URI::encode(sub[0])
     @watch_string_array << %Q*<a href="/shows/#{title}">#{sub[0]}</a>*
   end
-  if @watch_string_array.length == 0 then
-    @watch_string_array = "nothing"
-  else
-    @watch_string_array = @watch_string_array.join(", ").gsub(/, (?!.*, )/, " and ")
-  end
+  (@watch_string_array.length == 0) ?
+      @watch_string_array = "nothing" :
+      @watch_string_array = @watch_string_array.join(", ").gsub(/, (?!.*, )/, " and ")
 
   # Get the list of all movies burnt for this person.
   @movies = @db.prepare("select title from movies where owner = (SELECT id FROM owners WHERE name = ?)").execute(params[:name])
@@ -56,9 +56,7 @@ get '/shows/:show' do
   raw_viewers = @db.prepare("SELECT name FROM subscriptions WHERE title = ? ORDER BY name ASC").execute(params[:show])
   @viewers = []
   raw_viewers.each {|viewer| @viewers << viewer[0]}
-  @viewers = @viewers.map do |name|
-    "<a href='../../#{name}'>#{name}</a>"
-  end
+  @viewers = @viewers.map { |name| "<a href='../../#{name}'>#{name}</a>" }
   @viewers = @viewers.join(", ").gsub(/, (?!.*, )/, " and ")
 
   erb :viewers
