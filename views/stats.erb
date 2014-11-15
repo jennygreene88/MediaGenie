@@ -1,0 +1,52 @@
+<table>
+	<thead>
+		<th>Statistic</th>
+		<th>Figure</th>
+	</thead>
+
+	<tr>
+		<td>Recording Started</td>
+		<td>1 January 2014</td>
+	</tr>
+
+	<tr>
+		<td>Total Discs Issued</td>
+		<td><%= @issued.to_s %></td>
+	</tr>
+
+	<tr>
+		<td>Estimated Cost</td>
+		<td><%= sprintf "$%.02f", @issued*0.3 %></td>
+	</tr>
+
+	<tr>
+		<td>Heaviest Consumer of Movies</td>
+		<td><%= @heaviest_movies %></td>
+	</tr>
+
+	<tr>
+		<td>Heaviest Consumer of TV</td>
+		<td><%= @heaviest_movies %></td>
+	</tr>
+
+	<tr>
+		<td>Show With Most Discs</td>
+		<td><%= @most_discs %></td>
+	</tr>
+
+	<tr>
+		<td>Most Popular Show</td>
+		<td><%= @most_popular %></td>
+	</tr>
+
+	<tr>
+		<td>Subscriptions Tracked</td>
+		<td><%= @subscriptions %></td>
+	</tr>
+
+	<tr>
+		<td>Number of Users</td>
+		<td><%= @users %></td>
+	</tr>
+
+</table>
