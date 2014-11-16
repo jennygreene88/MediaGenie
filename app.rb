@@ -30,9 +30,8 @@ end
 
 
 get '/:name' do
-  allshows = @db.prepare('SELECT DISTINCT show FROM tv WHERE owner = (SELECT id FROM owners WHERE name = ?)').execute(params[:name])
-  
   # Build a multidimensional array like [[Seinfeld, SQL result set for all Seinfeld discs], [Hannibal, SQL result set for all Hannibal discs]]
+  allshows = @db.prepare('SELECT DISTINCT show FROM tv WHERE owner = (SELECT id FROM owners WHERE name = ?)').execute(params[:name])
   @watched_shows = []
   allshows.each {|sub| @watched_shows << [sub[0], @db.prepare('SELECT episodes FROM tv WHERE show = ? AND owner = (SELECT id FROM owners WHERE name = ?)').execute(sub[0], params[:name])]}
 
@@ -43,7 +42,7 @@ get '/:name' do
       @watch_string_array = 'nothing' :
       @watch_string_array = @watch_string_array.join(", ").gsub(/, (?!.*, )/, ' and ')
 
-  # Get the list of all movies burnt for this person.
+  # Get the list of all movies issued for this person.
   @movies = @db.prepare('SELECT TITLE FROM movies WHERE owner = (SELECT id FROM owners WHERE name = ?)').execute(params[:name])
 
   erb :subs
