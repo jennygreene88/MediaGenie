@@ -30,11 +30,11 @@ end
 
 
 get '/:name' do
-  @allshows = @db.prepare('SELECT DISTINCT show FROM tv WHERE owner = (SELECT id FROM owners WHERE name = ?)').execute(params[:name])
+  allshows = @db.prepare('SELECT DISTINCT show FROM tv WHERE owner = (SELECT id FROM owners WHERE name = ?)').execute(params[:name])
   
   # Build a multidimensional array like [[Seinfeld, SQL result set for all Seinfeld discs], [Hannibal, SQL result set for all Hannibal discs]]
   @watched_shows = []
-  @allshows.each {|sub| @watched_shows << [sub[0], @db.prepare('SELECT episodes FROM tv WHERE show = ? AND owner = (SELECT id FROM owners WHERE name = ?)').execute(sub[0], params[:name])]}
+  allshows.each {|sub| @watched_shows << [sub[0], @db.prepare('SELECT episodes FROM tv WHERE show = ? AND owner = (SELECT id FROM owners WHERE name = ?)').execute(sub[0], params[:name])]}
 
   # Build a string of watched shows to use as a header on the resulting page.
   @watch_string_array = []
