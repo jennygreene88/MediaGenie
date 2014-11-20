@@ -24,7 +24,7 @@ get '/stats' do
   @most_popular     = @db.execute('SELECT title FROM (select title, count(*) AS count1 FROM subscriptions GROUP BY title ORDER BY count1 DESC LIMIT 1)')[0][0]
   @users            = @db.execute('SELECT count(*) FROM owners')[0][0]
   @discs_per_day    = sprintf '%.05f', @issued/((Time.now.to_i-Time.new('2014-01-01').to_i)/60/60/24).to_f
-  @purchase_cost    = @issued*17.20
+  @purchase_cost    = sprintf '%.02f', @issued*17.20
   erb :stats
 end
 
